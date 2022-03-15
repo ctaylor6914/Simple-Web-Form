@@ -1,0 +1,206 @@
+<!DOCTYPE HTML>
+<HTML>
+  <!--  
+	Programmer: Colby Taylor 8466914
+	Date: 10/01/2021
+	Description: SET registration is a web form that has a user fill in
+	the necessary information, validates it and send it to testrequest.asp
+  -->
+  <HEAD>
+    <TITLE>SET Registration</TITLE>
+    <SCRIPT type="text/javascript">
+	// ------------------------------------------------------------
+    //          Function	: changeDiv()
+	//			Arguments	: num
+	//			Description	: this function takes a number based on 
+	//						: a radio clicked to change a div to show 
+	//						: specific check boxes 
+	//			
+    // ------------------------------------------------------------
+	function changeDiv(num)
+    {
+	  if(num == 1) // faculty
+	  {
+		document.getElementById("section3").style.display="none";
+		document.getElementById("section2").style.display="inline";
+	  }
+	  else if(num == 2) // Student
+	  {
+		document.getElementById("section2").style.display="none";
+		document.getElementById("section3").style.display="inline";
+		
+	  }
+	}
+	// ----------------------------------------------------------------------------
+    //          Function	: validateForm()
+	//			Arguments	: void
+	//			Description	: Values are taken from the DOC and validated
+	//						: to ensure correctness prior to submitting the web form
+	//			Credit		: code taken and modified from econestoga on 9/21/2021
+	//				  		: Author = Sean Clarke
+    // ---------------------------------------------------------------------------
+	function validateForm()
+	{
+		var name = document.getElementById("fullName").value;
+		var validName = false;
+		var address = document.getElementById("address").value;
+		var validAddress = false;
+		var city = document.getElementById("city").value;
+		var validCity = false;
+		var postalCode = document.getElementById("postalCode").value;
+		var validCode = false;
+		var choice = false;
+		var whichProv = true;
+        var shouldSubmit = true;    
+		
+		if (document.registration.Province.value == 0) 
+		{ 
+			whichProv = false; 
+		}
+		
+		if(document.registration.FacultyOrStudent.value == "Faculty" || document.registration.FacultyOrStudent.value == "Student")
+		{
+			choice = true;
+		}
+		
+		var firstNlast = /[a-zA-Z][ ][a-zA-Z]/;
+		if(name.match(firstNlast))
+		{
+			validName=true;
+		}
+		else
+		{
+			validName=false;
+		}
+	    
+		var addressMatch = /[0-9][ ][A-Za-z]/;
+		if(address.match(addressMatch))
+		{
+			validAddress=true;
+		}
+		else
+		{
+			validAddress=false;
+		}
+		
+		var cityMatch = /^[A-Za-z\s]/;
+		if(city.match(cityMatch))
+		{
+			validCity = true;
+		}
+		else
+		{
+			validCity=false;
+		}
+		
+		var postalCodeMatch = /[A-Z]{1}[0-9]{1}[A-Z]{1}[ ][0-9]{1}[A-Z]{1}[0-9]{1}/;
+		if(postalCode.match(postalCodeMatch))
+		{
+			validCode = true;
+		}
+		else
+		{
+			validCode = false;
+		}
+		
+		var nameLength = (name.trim()).length;
+		var addressLength = (address.trim()).length;
+		var cityLength = (city.trim()).length;
+		var codeLength = (postalCode.trim()).length;
+		
+        if ((validName == false) || (validAddress == false) || (validCity == false) || (validCode==false) 
+		||(nameLength == 0)||(addressLength==0)||(cityLength==0)||(whichProv==false)||(codeLength==0)||(choice == false))
+        {
+		var errMsg;
+		// tell the user which fields are not complete
+            errMsg = "Sorry, all fields in the form are <b>MANDATORY</b> and <b>SPECIFIC</b>.  Issues are as Follows: <ul>";
+			if(choice == false) errMsg=errMsg+"<li>Please Select Student or Faculty</li>"
+			if(nameLength == 0) errMsg=errMsg+"<li>the <i>Name</i> cannot be BLANK</li>";
+			if(addressLength==0) errMsg=errMsg+"<li>the <i>Address</i> cannot be BLANK</li>";
+			if(cityLength==0) errMsg=errMsg+"<li>the <i>City</i> cannot be BLANK</li>";
+			if(codeLength==0) errMsg=errMsg+"<li>the <i>Postal Code</i> cannot be BLANK</li>";
+      
+            if (validName == false) errMsg=errMsg+"<li>the <i>Name</i>. Please use proper format ie. John Smith</li>";
+            if (validAddress == false) errMsg=errMsg+"<li>the <i>Address</i>. Please use proper format ie. 123 Fake Street</li>";
+            if (validCity == false) errMsg=errMsg+"<li>the <i>City</i>. Please use proper format ie. Toronto</li>";
+            if (whichProv == false) errMsg=errMsg+"<li>the <i>Province</i>. Please pick a selection</li>";
+			if (validCode == false) errMsg=errMsg+"<li>the <i>Postal Code</i>. Please use proper format ie. A1B 2C3</li>";
+            errMsg=errMsg+"</ul>";		// close the unordered list element
+
+            document.getElementById("userFeedback").innerHTML = errMsg;
+            shouldSubmit = false;   // sorry there's an error - can't submit
+        }
+        return shouldSubmit;
+	}
+	
+	</SCRIPT>
+  </HEAD>
+  <BODY>
+  <FORM name="registration" action="testrequest.asp" onsubmit="return validateForm();" method="GET">
+  <H3>SET Registration</H3>
+  <p>Please complete the following information and when done, press the <b><i>Register</i></b> button.</p>
+      <table border="0" width="80%">
+        <tr>
+          <td width="20%" align="right">First and Last Name</td>
+		  <td width="58%" align="left"><input type="text" size="15" placeholder="Joe Smith" id="fullName" name="fullName"/></td>
+        </tr>
+		<tr>
+          <td align="right">Street Address</td>
+          <td align="left"><input type="text" size="15" placeholder="123 Fake Street" id="address" name="address"/></td>
+        </tr>
+		<tr>
+          <td align="right">City</td>
+          <td align="left"><input type="text" size="15" placeholder="Toronto" id="city" name="city"/></td>
+        </tr>
+		<TR>
+          <TD align="right">Province</TD>
+          <TD align="left">
+            <SELECT name="Province">
+              <OPTION value=0>--Select Province--</OPTION>
+              <OPTION value="AB">Alberta</OPTION>
+              <OPTION value="BC">British Columbia</OPTION>
+              <OPTION value="MB">Manitoba</OPTION>
+              <OPTION value="NB">New Brunswick</OPTION>
+              <OPTION value="NL">Newfoundland and Labrador</OPTION>
+			  <OPTION value="NT">Northwest Territories</OPTION>
+			  <OPTION value="NS">Nova Scotia</OPTION>
+			  <OPTION value="NU">Nunavut</OPTION>
+			  <OPTION value="ON">Ontario</OPTION>
+			  <OPTION value="PE">P.E.I</OPTION>
+			  <OPTION value="QC">Quebec</OPTION>
+			  <OPTION value="SK">Saskatchewan</OPTION>
+			  <OPTION value="YT">Yukon</OPTION>
+            </SELECT>
+          </TD>
+        </TR>
+		<tr>
+          <td align="right">Postal Code</td>
+          <td align="left"><input type="text" size="15" placeholder="A1B 2C3" id="postalCode" name="postalCode"/></td>
+        </tr>
+		</table>
+		<td align="left">
+            <input type="radio" name="FacultyOrStudent" value="Faculty" onclick="changeDiv(1);"/>Faculty&nbsp;
+			<input type="radio" name="FacultyOrStudent" value="Student" onclick="changeDiv(2);"/>Student&nbsp;
+		</td>
+		
+		<div id="section2" style="display:none">
+		<br>
+			<input type="checkbox" id = "teach" name="FacultyCheckBox" value="teach"><label for="teach">Teach in Engineering </label><br>
+			<input type="checkbox" id = "drive" name="FacultyCheckBox" value="drive"><label for="drive">Drive Car to Work </label><br>	
+			<input type="checkbox" id = "lunch" name="FacultyCheckBox" value="lunch"><label for="lunch">Bring Lunch </label><br>
+		</div>
+		
+		<div id="section3" style="display:none">
+		<br>
+			<input type="checkbox" id = "study"  name="StudentCheckBox" value="study"> <label for="study">Study In Information Technology </label><br>
+			<input type="checkbox" id = "laptop" name="StudentCheckBox" value="laptop"><label for="laptop">Own a Laptop Computer </label><br>	
+			<input type="checkbox" id = "bus"    name="StudentCheckBox" value="bus">   <label for="bus">Take Bus to School</label><br>
+			<input type="checkbox" id = "wdd"    name="StudentCheckBox" value="wdd">   <label for="enjoy">Enjoys Web Design and Development</label><br>
+		</div>
+		<br>
+		<TD align="left"><INPUT type="submit" id="goForIt" value="Register">
+		<TD align="left"><INPUT type="reset" id="clearForm" Value="Clear Form"/>
+		<div id="userFeedback" style="color:red;"></div>
+  </FORM>
+  </BODY>
+  </HTML>
